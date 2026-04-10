@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CTE Diagnostic — The Data Governance Office</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple: #534AB7;
+    --purple-light: #EEEDFE;
+    --purple-mid: #7F77DD;
+    --purple-dark: #3C3489;
+    --teal: #0F6E56;
+    --teal-light: #E1F5EE;
+    --teal-mid: #1D9E75;
+    --coral: #993C1D;
+    --coral-light: #FAECE7;
+    --coral-mid: #D85A30;
+    --ink: #1a1a18;
+    --ink-mid: #44443f;
+    --ink-soft: #6e6e68;
+    --ink-mute: #9e9e96;
+    --surface: #faf9f7;
+    --border: rgba(26,26,24,0.1);
+    --border-strong: rgba(26,26,24,0.2);
+    --white: #ffffff;
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+  }
+
+  html { font-size: 16px; scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--surface);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* Header */
+  .site-header {
+    padding: 28px 24px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .brand {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .brand span { color: var(--purple); }
+  .header-tag {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+
+  /* Hero */
+  .hero {
+    background: var(--white);
+    padding: 56px 24px 48px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--purple);
+  }
+  .hero-sub {
+    font-size: 16px;
+    color: var(--ink-soft);
+    max-width: 480px;
+    margin: 0 auto 32px;
+    line-height: 1.7;
+  }
+  .cte-pills {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .cte-pill {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 16px;
+    border-radius: 999px;
+    border: 1px solid;
+  }
+  .pill-c { background: var(--purple-light); color: var(--purple-dark); border-color: rgba(83,74,183,0.25); }
+  .pill-t { background: var(--teal-light); color: var(--teal); border-color: rgba(15,110,86,0.25); }
+  .pill-e { background: var(--coral-light); color: var(--coral); border-color: rgba(153,60,29,0.25); }
+
+  /* Main layout */
+  .main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* Progress */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 32px;
+  }
+  .progress-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    transition: background 0.25s, transform 0.25s;
+    background: var(--border-strong);
+  }
+  .progress-dot.done { background: var(--ink-mute); }
+  .progress-dot.active { background: var(--purple); transform: scale(1.25); }
+  .progress-label {
+    margin-left: 6px;
+    font-size: 12px;
+    color: var(--ink-mute);
+    font-weight: 500;
+  }
+
+  /* Question */
+  .q-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 16px;
+    animation: fadeUp 0.3s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .q-num {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 10px;
+  }
+  .q-text {
+    font-family: var(--serif);
+    font-size: 20px;
+    line-height: 1.35;
+    color: var(--ink);
+    font-weight: 400;
+    margin-bottom: 24px;
+  }
+
+  /* Options */
+  .option-btn {
+    width: 100%;
+    text-align: left;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--ink-mid);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.5;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+    display: block;
+  }
+  .option-btn:hover { border-color: var(--border-strong); background: var(--white); color: var(--ink); }
+  .option-btn.selected {
+    border-color: var(--purple);
+    background: var(--purple-light);
+    color: var(--purple-dark);
+  }
+
+  /* Next button */
+  .next-btn {
+    margin-top: 8px;
+    padding: 13px 28px;
+    border-radius: 999px;
+    border: none;
+    background: var(--purple);
+    color: var(--white);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+  }
+  .next-btn:hover:not(:disabled) { background: var(--purple-dark); }
+  .next-btn:active:not(:disabled) { transform: scale(0.98); }
+  .next-btn:disabled { background: var(--border-strong); color: var(--ink-mute); cursor: default; }
+
+  /* Result */
+  .result-wrap { animation: fadeUp 0.35s ease both; }
+
+  .result-stage-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 6px;
+  }
+  .result-stage-name {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+  }
+
+  /* Score bars */
+  .score-bars {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+  .bar-row { margin-bottom: 12px; }
+  .bar-row:last-child { margin-bottom: 0; }
+  .bar-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-soft); margin-bottom: 5px; }
+  .bar-track { height: 5px; border-radius: 3px; background: var(--surface); overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+
+  /* Root cause */
+  .root-card {
+    border-left: 3px solid var(--purple);
+    padding: 14px 18px;
+    background: var(--white);
+    border-radius: 0 12px 12px 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--ink-mid);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  /* What moves people */
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 14px;
+  }
+  .moves-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .move-row {
+    display: flex;
+    gap: 16px;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .move-row:last-child { border-bottom: none; }
+  .move-num {
+    font-family: var(--serif);
+    font-size: 20px;
+    color: var(--border-strong);
+    min-width: 24px;
+    line-height: 1.2;
+    padding-top: 1px;
+  }
+  .move-title { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+  .move-detail { font-size: 13px; color: var(--ink-soft); line-height: 1.65; }
+
+  /* Secondary signal */
+  .secondary-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    margin-bottom: 24px;
+  }
+  .secondary-card strong { color: var(--ink); font-weight: 500; }
+
+  /* Anchor truth */
+  .anchor-truth {
+    background: var(--purple-light);
+    border-radius: 12px;
+    padding: 18px 20px;
+    font-size: 14px;
+    color: var(--purple-dark);
+    line-height: 1.7;
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+
+  /* CTA */
+  .cta-bar {
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .cta-text { font-size: 13px; color: var(--ink-soft); }
+  .cta-text a { color: var(--purple); text-decoration: none; font-weight: 500; }
+  .cta-text a:hover { text-decoration: underline; }
+  .retake-btn {
+    padding: 10px 22px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    color: var(--ink-mid);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .retake-btn:hover { background: var(--white); }
+
+  /* Footer */
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 24px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-mute);
+  }
+  .site-footer a { color: var(--purple); text-decoration: none; }
+  .site-footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 480px) {
+    .q-card { padding: 24px 18px; }
+    .hero { padding: 40px 20px 36px; }
+    .cta-bar { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">The <span>Data Governance</span> Office</div>
+  <div class="header-tag">CTE Framework</div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">Free Diagnostic Tool</div>
+  <h1>Where is your governance program <em>really</em> stuck?</h1>
+  <p class="hero-sub">5 questions. No theory. Just a clear read on which stage is blocking your program — and what to do about it.</p>
+  <div class="cte-pills">
+    <span class="cte-pill pill-c">Clarity</span>
+    <span class="cte-pill pill-t">Trust</span>
+    <span class="cte-pill pill-e">Efficiency</span>
+  </div>
+</section>
+
+<main class="main">
+  <div id="app"></div>
+</main>
+
+<footer class="site-footer">
+  Built by <a href="#">The Data Governance Office</a> &mdash; practical governance for regulated environments.
+</footer>
+
+<script>
+const STAGES = {
+  clarity: {
+    label: 'Stage 1 — Clarity',
+    shortLabel: 'Clarity',
+    color: '#534AB7',
+    bg: '#EEEDFE',
+    textColor: '#3C3489',
+    rootCause: 'People are protecting themselves from accountability. Ambiguity feels safer than commitment — because committing to a definition means owning what happens when the data is wrong. The resistance isn\'t stubbornness. It\'s rational self-preservation.',
+    moves: [
+      { title: 'Make the cost of ambiguity visible', detail: 'Find a real decision that went wrong because two teams measured the same thing differently. Name it out loud. The abstract case for clarity never lands as well as a concrete example that already happened in your organisation.' },
+      { title: 'Reframe what ownership means', detail: '"You get the final say" lands far better than "you\'re responsible." People avoid ownership because they assume it means blame. Your job is to separate decision rights from accountability for outcomes — and make that separation explicit.' },
+      { title: 'Document current state before proposing change', detail: 'Run a definition workshop where the first output is "what do we currently mean?" — not "what should we mean?" People stop resisting when they feel heard rather than corrected. Clarity starts with acknowledgment, not prescription.' },
+      { title: 'Find your early sponsor', detail: 'You need one senior person who already believes this matters — not someone you\'ve converted, someone already convinced. Everything else in the Clarity stage flows from having that visible internal champion who gives others permission to engage.' },
+    ]
+  },
+  trust: {
+    label: 'Stage 2 — Trust',
+    shortLabel: 'Trust',
+    color: '#0F6E56',
+    bg: '#E1F5EE',
+    textColor: '#085041',
+    rootCause: 'People have been burned before. They built something, someone questioned the numbers, and they couldn\'t defend it. So they stopped trusting the system and built their own version. You can\'t tell people the data is correct. You have to prove it — consistently, over time, and honestly when it isn\'t.',
+    moves: [
+      { title: 'Be transparent about past failures', detail: 'Name a time the data was wrong and show exactly what you did about it. Acknowledging failure openly builds more trust than pretending the system has always been reliable. People don\'t need perfection — they need to see that failure is handled honestly.' },
+      { title: 'Make data lineage visible and navigable', detail: 'People trust data when they can trace where it came from. Lineage isn\'t just a technical requirement — it\'s a trust mechanism. If someone can\'t answer "where does this number come from?", you\'re asking for blind faith. That won\'t work.' },
+      { title: 'Retire the parallel systems deliberately', detail: 'As long as the shadow spreadsheet exists, it will be used. Decommissioning it has to be a visible, communicated act — not something that quietly disappears. The act of retiring it is itself a signal that the governed version is ready to be trusted.' },
+      { title: 'Make the first governed decision public', detail: 'Find the first time a meaningful business decision was made using governed data and tell that story internally. Case studies build trust faster than governance documentation. One real example is worth a hundred policy documents.' },
+    ]
+  },
+  efficiency: {
+    label: 'Stage 3 — Efficiency',
+    shortLabel: 'Efficiency',
+    color: '#993C1D',
+    bg: '#FAECE7',
+    textColor: '#712B13',
+    rootCause: 'Governance dies quietly after early wins. The framework exists, people mostly trust the data — and then old patterns creep back in because no one is actively reinforcing the new ones. Efficiency is the most fragile stage. It requires governance to become invisible, and invisible things are easy to bypass.',
+    moves: [
+      { title: 'Embed governance into tools people already use', detail: 'If governance requires a context switch — a separate portal, a separate meeting, a separate process — it will be skipped under pressure. It needs to live inside the workflows people already use to do their jobs. Friction is the enemy of adoption.' },
+      { title: 'Make the gains personal and measurable', detail: '"We saved 3 hours per week in the Finance reconciliation cycle" lands harder than "data quality improved." Translate abstract efficiency gains into time and frustration — not metrics. People respond to things they feel, not things they report.' },
+      { title: 'Fix the onboarding gap before it compounds', detail: 'New people import old habits from wherever they came from. If governance isn\'t embedded in how someone is onboarded, you\'re constantly fighting against their defaults. Every new hire who bypasses the process becomes a future culture problem.' },
+      { title: 'Appoint stewards by interest, not availability', detail: 'Forced ownership creates resentment, not governance. A steward who genuinely cares — even imperfectly — will outperform someone who was assigned because they had capacity. Willingness is the prerequisite. Everything else can be trained.' },
+    ]
+  }
+};
+
+const QUESTIONS = [
+  {
+    q: 'When you look at your governance program right now, what is the most honest description of where it is?',
+    options: [
+      { text: 'We have a framework on paper but people aren\'t using it consistently', weight: { clarity: 2, trust: 1 } },
+      { text: 'People are using it but still running their own versions "just to check"', weight: { trust: 3 } },
+      { text: 'It works, but only because a few people are carrying it', weight: { efficiency: 2, trust: 1 } },
+      { text: 'Honestly, we\'re still arguing about definitions and ownership', weight: { clarity: 3 } },
+    ]
+  },
+  {
+    q: 'What does resistance most often look like in your organisation?',
+    options: [
+      { text: '"That\'s how we\'ve always measured it" — people defending their version', weight: { clarity: 3 } },
+      { text: '"I\'ll use the governed data, but I\'m keeping my spreadsheet just in case"', weight: { trust: 3 } },
+      { text: 'Governance works when someone is pushing it, but reverts when no one is watching', weight: { efficiency: 3 } },
+      { text: 'We get agreement in meetings that evaporates by the following week', weight: { clarity: 2, trust: 1 } },
+    ]
+  },
+  {
+    q: 'If you had to name the single biggest blocker right now, what would it be?',
+    options: [
+      { text: 'No one will commit to owning a data domain', weight: { clarity: 3 } },
+      { text: 'People don\'t trust the numbers coming out of governed systems', weight: { trust: 3 } },
+      { text: 'The program loses momentum every time there\'s a competing priority', weight: { efficiency: 2, trust: 1 } },
+      { text: 'Stakeholders say they support governance but don\'t show up when it matters', weight: { clarity: 1, trust: 1, efficiency: 1 } },
+    ]
+  },
+  {
+    q: 'Which of these feels most true about your data conversations right now?',
+    options: [
+      { text: 'Every meeting starts with ten minutes of "which number are we using?"', weight: { clarity: 3 } },
+      { text: 'We know what the number should be, but people don\'t believe it', weight: { trust: 3 } },
+      { text: 'Governance is working but it\'s not scaling as the organisation grows', weight: { efficiency: 3 } },
+      { text: 'Different teams have different definitions and no one wants to be the one who changes', weight: { clarity: 2, trust: 1 } },
+    ]
+  },
+  {
+    q: 'Honestly — what would it take to move your program forward right now?',
+    options: [
+      { text: 'Someone with authority to make a call on definitions and ownership', weight: { clarity: 3 } },
+      { text: 'Proof that the governed data is actually more reliable than the alternatives', weight: { trust: 3 } },
+      { text: 'Governance embedded into daily tools so it doesn\'t require discipline to follow', weight: { efficiency: 3 } },
+      { text: 'A visible internal win that shows executives this is worth the investment', weight: { clarity: 1, trust: 2 } },
+    ]
+  }
+];
+
+let current = 0;
+let scores = { clarity: 0, trust: 0, efficiency: 0 };
+let selected = null;
+
+function render() {
+  const app = document.getElementById('app');
+  if (current < QUESTIONS.length) {
+    renderQuestion(app);
+  } else {
+    renderResult(app);
+  }
+}
+
+function renderQuestion(app) {
+  const q = QUESTIONS[current];
+  const dots = QUESTIONS.map((_, i) => {
+    let cls = 'progress-dot';
+    if (i < current) cls += ' done';
+    if (i === current) cls += ' active';
+    return `<span class="${cls}"></span>`;
+  }).join('');
+
+  app.innerHTML = `
+    <div class="progress-wrap">
+      ${dots}
+      <span class="progress-label">${current + 1} of ${QUESTIONS.length}</span>
+    </div>
+    <div class="q-card">
+      <div class="q-num">Question ${current + 1}</div>
+      <div class="q-text">${q.q}</div>
+      <div id="options">
+        ${q.options.map((o, i) => `
+          <button class="option-btn${selected === i ? ' selected' : ''}" onclick="selectOption(${i})">${o.text}</button>
+        `).join('')}
+      </div>
+    </div>
+    <button class="next-btn" id="next-btn" onclick="advance()" ${selected === null ? 'disabled' : ''}>
+      ${current < QUESTIONS.length - 1 ? 'Next question →' : 'See my result →'}
+    </button>
+  `;
+}
+
+function selectOption(i) {
+  selected = i;
+  document.querySelectorAll('.option-btn').forEach((b, idx) => {
+    b.classList.toggle('selected', idx === i);
+  });
+  document.getElementById('next-btn').disabled = false;
+}
+
+function advance() {
+  if (selected === null) return;
+  const weights = QUESTIONS[current].options[selected].weight;
+  Object.keys(weights).forEach(k => { scores[k] += weights[k]; });
+  selected = null;
+  current++;
+  render();
+}
+
+function renderResult(app) {
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const primaryKey = sorted[0][0];
+  const secondaryKey = sorted[1][0];
+  const stage = STAGES[primaryKey];
+  const secondary = STAGES[secondaryKey];
+  const total = Object.values(scores).reduce((a, b) => a + b, 0);
+
+  const bars = sorted.map(([key, val]) => {
+    const s = STAGES[key];
+    const pct = total > 0 ? Math.round((val / total) * 100) : 0;
+    return `
+      <div class="bar-row">
+        <div class="bar-meta">
+          <span>${s.label}</span>
+          <span>${pct}%</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${pct}%;background:${s.color};"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const movesHtml = stage.moves.map((m, i) => `
+    <div class="move-row">
+      <div class="move-num">${i + 1}</div>
+      <div>
+        <div class="move-title">${m.title}</div>
+        <div class="move-detail">${m.detail}</div>
+      </div>
+    </div>
+  `).join('');
+
+  app.innerHTML = `
+    <div class="result-wrap">
+      <div class="result-stage-label">Your program is primarily stuck in</div>
+      <div class="result-stage-name">${stage.label}</div>
+
+      <div class="score-bars">${bars}</div>
+
+      <div class="root-card" style="border-left-color:${stage.color};">${stage.rootCause}</div>
+
+      <div class="anchor-truth">
+        The resistance is rational. Before you design any intervention, ask: what is this person protecting themselves from? The answer tells you everything.
+      </div>
+
+      <div class="section-label">What moves people through ${stage.shortLabel}</div>
+      <div class="moves-card">${movesHtml}</div>
+
+      ${sorted[1][1] > 0 ? `
+      <div class="secondary-card">
+        <strong>Secondary signal:</strong> Your answers also showed signs of being stuck in ${secondary.label}. Once you make progress on ${stage.shortLabel}, that's likely your next constraint.
+      </div>
+      ` : ''}
+
+      <div class="cta-bar">
+        <div class="cta-text">
+          More thinking like this at <a href="#">The Data Governance Office</a>
+        </div>
+        <button class="retake-btn" onclick="restart()">Retake diagnostic ↺</button>
+      </div>
+    </div>
+  `;
+
+  setTimeout(() => {
+    document.querySelectorAll('.bar-fill').forEach(el => {
+      const w = el.style.width;
+      el.style.width = '0%';
+      requestAnimationFrame(() => { el.style.width = w; });
+    });
+  }, 50);
+}
+
+function restart() {
+  current = 0;
+  scores = { clarity: 0, trust: 0, efficiency: 0 };
+  selected = null;
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
